@@ -13,7 +13,15 @@ class Url(BaseModel):
 
 class Apartment(BaseModel):
     link: str
-    description: str
+    live_rooms: int
+    price: int
+    live_square: float
+    text: str
+    country: str
+    region: str
+    city: str
+    street: str
+    house_num: str
 
 
 app = FastAPI()
@@ -28,10 +36,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.post("/parse-apartment")
 async def parse(url: Url):
     response = requests.get(url.url)
-    soup = BeautifulSoup(response.content,  'html.parser')
+    soup = BeautifulSoup(response.content, 'html.parser')
     script = soup.find('script', id='jsdata')
     pattern = r'var data = ({.*?});'
 
@@ -44,8 +53,18 @@ async def parse(url: Url):
         # Parse the extracted JSON string into a Python object
         data_object = json.loads(data_object_str)
         print("Retrieved object:", data_object)
-        return data_object
+        apartment = Apartment(
+            price=data_object['advert']['price'],
+            link=url.url,
+            live_square=data_object['advert']['square'],
+            live_rooms=data_object['advert']['rooms'],
+            text=data_object['adverts']['description'],
+            country=data_object['adverts']['address']['country'],
+            region=data_object['adverts']['address']['region'],
+            city=data_object['adverts']['address']['city'],
+            street=data_object['adverts']['address']['street'],
+            house_num=data_object['adverts']['address']['house_num'],
+        )
+        return apartment
     else:
         print("No JavaScript object found in the string.")
-
-
