@@ -58,12 +58,12 @@ async def parse(url: Url):
             link=url.url,
             live_square=data_object['advert']['square'],
             live_rooms=data_object['advert']['rooms'],
-            text=data_object['adverts']['description'],
-            country=data_object['adverts']['address']['country'],
-            region=data_object['adverts']['address']['region'],
-            city=data_object['adverts']['address']['city'],
-            street=data_object['adverts']['address']['street'],
-            house_num=data_object['adverts']['address']['house_num'],
+            text=data_object['adverts'][0]['description'],
+            country=data_object['advert']['address']['country'],
+            region=data_object['advert']['address']['region'],
+            city=data_object['advert']['address']['city'],
+            street=data_object['advert']['address']['street'],
+            house_num=data_object['advert']['address']['house_num'],
         )
         return apartment
     else:
