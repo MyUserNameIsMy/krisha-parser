@@ -1,10 +1,10 @@
 import json
 import re
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class Url(BaseModel):
@@ -18,6 +18,15 @@ class Apartment(BaseModel):
 
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/parse-apartment")
 async def parse(url: Url):
